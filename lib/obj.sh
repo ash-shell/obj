@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# The directory we are pulling the objects from
-Obj__directory="$Ash__active_module_directory/objects"
+# The directory we are pulling the objects from.
+# This will need to bet set!
+Obj__directory=""
 
 ################################################################
 # Allocates an object pointer.  Must call `Obj__init` on this
