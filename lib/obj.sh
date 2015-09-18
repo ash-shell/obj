@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# The directory we are pulling the objects from.
+# The directory we are pulling the classes from.
 # This will need to bet set!
-Obj__directory=""
+Obj__classes_directory=""
 
 ################################################################
 # Allocates an object pointer.  Must call `Obj__init` on this
@@ -38,7 +38,7 @@ Obj__init(){
     # Creating unique variable / method names
     local to_find="$class"_
     local to_replace="$class"_"$uuid"_
-    eval "$(cat "$Obj__directory/$class.sh" | sed -e "s:$to_find:$to_replace:g")"
+    eval "$(cat "$Obj__classes_directory/$class.sh" | sed -e "s:$to_find:$to_replace:g")"
 
     # Calling the constructor
     Obj__call $1 construct "${@:2}"
