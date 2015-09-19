@@ -45,12 +45,14 @@ I'll explain the different components of what a class is below, but here is what
 
 Person__id=""
 Person__name=""
+Person__age=""
 
 Person_birthdays_count=0
 
 Person__construct(){
     Person__id="$1"
     Person__name="$2"
+    Person__age="$3"
 }
 
 Person__make_older(){
@@ -117,4 +119,17 @@ This makes this library work extremely well with bash, as these pointers are jus
 
 ### Instantiating Objects
 
-To create an object, there are two steps.  First we have to allocate a pointer to the object, then we have to initialize the object.
+To create an object, there are two steps.  First we have to allocate a pointer for the object, then we have to initialize the object.
+
+To allocate a pointer for an object, we must use `Obj__alloc`.
+
+To initialize an object, we must use `Obj__init`.
+
+For example, if I wanted to create a new person object that represents myself, I would do this:
+
+```bash
+brandon=$(Obj__alloc "Person")
+Obj__init $brandon 1 "Brandon" 23
+```
+
+Now I have a reference to `$brandon`, which is a pointer to a initialized object representing myself.
