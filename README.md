@@ -2,7 +2,7 @@
 
 Ash Obj is an [Ash](https://github.com/BrandonRomano/ash) module that adds object support to Bash.
 
-## Getting started
+# Getting started
 
 ### Ash Users
 
@@ -25,9 +25,9 @@ The start of your script will look something like this:
 Obj__classes_directory="./classes"      # Setting classes directory
 ```
 
-## Features + Usage
+# Features + Usage
 
-### Creating Classes
+## Creating Classes
 
 Before getting into any details, as you would expect classes are the definition of what an object is.
 
@@ -65,7 +65,7 @@ Person_update_birthday_count(){
 }
 ```
 
-#### Public Members
+### Public Members
 
 Public members are variables that are bound to an object, that may be both fetched and updated from outside the scope of the class.
 
@@ -73,7 +73,7 @@ A public member is denoted by the Class name followed by two underscores `__`.
 
 > Following our example above, `Person__id` is a public member.
 
-#### Private Members
+### Private Members
 
 Private members are variables that are bound to an object, but may not be accessed from outside the scope of the class.  These are very powerful, as they allow you to manage state within an object without exposing additional information.
 
@@ -81,11 +81,11 @@ A private member is denoted by the Class name followed by a single underscore `_
 
 > Following our example above, `Person_birthdays_count` is a private member.
 
-#### Public Methods
+### Public Methods
 
-#### Private Methods
+### Private Methods
 
-#### Constructors
+### Constructors
 
 In the example above, the method `Person__construct` is our constructor.  This is called when initializing an object.
 
@@ -93,7 +93,4 @@ Constructors are simply
 
 Constructors can take an arbitrary amount of parameters.
 
-
-### Using Classes to Create Objects
-
-
+## Using Classes to Create Objects
