@@ -10,6 +10,8 @@ Ash Obj is part of the Ash core, so you can immediately start using it within yo
 
 Simply place your Classes in a directory named `classes` in the root of your modules directory, and start using them!
 
+For an example of an ash module that uses objects, [look here](https://github.com/BrandonRomano/ash-obj-examples).
+
 ### Non Ash Users
 
 Even if you're not an Ash user, this module can be used as a library.
