@@ -4,7 +4,7 @@ Ash Obj is an [Ash](https://github.com/BrandonRomano/ash) module that adds objec
 
 # Getting started
 
-### Ash Users
+## Ash Users
 
 Ash Obj is part of the Ash core, so you can immediately start using it within your Ash modules.
 
@@ -12,7 +12,7 @@ Simply place your Classes in a directory named `classes` in the root of your mod
 
 For an example of an ash module that uses objects, [look here](https://github.com/BrandonRomano/ash-obj-examples).
 
-### Non Ash Users
+## Non Ash Users
 
 Even if you're not an Ash user, this module can be used as a library.
 
@@ -39,7 +39,7 @@ I'll explain the different components of what a class is below, but here is what
 
 > For a fully commented version of this class, look [here](https://github.com/BrandonRomano/ash-obj-examples/blob/master/classes/Person.sh)
 
-```
+```bash
 #!/bin/bash
 # This is a simple class that represents a Person.
 
