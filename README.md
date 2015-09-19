@@ -121,9 +121,9 @@ This makes this library work extremely well with bash, as these pointers are jus
 
 To create an object, there are two steps.  First we have to allocate a pointer for the object, then we have to initialize the object.
 
-To allocate a pointer for an object, we must use `Obj__alloc`.  Object alloc will return the pointer you will use to refer to the object, so hold onto this!
+To allocate a pointer for an object, we must use `Obj__alloc`, which is passed a class name.  Object alloc will return the pointer you will use to refer to the object, so hold onto this!
 
-To initialize an object, we must use `Obj__init`.
+To initialize an object, we must use `Obj__init`, which is passed the object pointer.  You may pass any additional parameters after this, and they will get passed along to the objects construct method.
 
 For example, if I wanted to create a new person object that represents myself, I would do this:
 
@@ -227,7 +227,7 @@ Following our example, we could call:
 Obj__call $brandon make_older
 ```
 
-If you wanted to pass any parameters to the actual function inside of the class, this is possible.  You are able to pass any number of parameters to Obj__call after the second parameter, and they will be packed up as parameters to the `make_older` method.
+If you wanted to pass any parameters to the actual function inside of the class, this is possible.  You are able to pass any number of parameters to `Obj__call` after the second parameter, and they will be packed up as parameters to the `make_older` method.
 
 Hypothetically, if make_older allowed a single parameter ($1) to specify how many years older, you could call:
 
