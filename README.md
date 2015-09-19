@@ -105,4 +105,16 @@ A constructor is a function denoted by the class name followed by `__construct`.
 
 > Following our example above, `Person__construct` is our constructor.
 
-## Using Classes to Create Objects
+## Creating and Using Objects
+
+Now that we've created this cool class, I'd imagine now we would want to use it.
+
+### Objects by Reference
+
+It's worth noting that all objects created will be by reference (or by means of pointer).
+
+This makes this library work extremely well with bash, as these pointers are just strings that can be dealt with in any way that bash currently supports.  This allows you to throw objects into arrays, use them as parameters to functions, use them in subshells, etc, all without any additional extension to Bash.
+
+### Instantiating Objects
+
+To create an object, there are two steps.  First we have to allocate a pointer to the object, then we have to initialize the object.
