@@ -117,11 +117,11 @@ It's worth noting that all objects created will be by reference (or by means of 
 
 This makes this library work extremely well with bash, as these pointers are just strings that can be dealt with in any way that bash currently supports.  This allows you to throw objects into arrays, use them as parameters to functions, use them in subshells, etc, all without any additional extension to Bash.
 
-### Instantiating Objects
+### Instantiating Objects (Obj__alloc / Obj__init)
 
 To create an object, there are two steps.  First we have to allocate a pointer for the object, then we have to initialize the object.
 
-To allocate a pointer for an object, we must use `Obj__alloc`.
+To allocate a pointer for an object, we must use `Obj__alloc`.  Object alloc will return the pointer you will use to refer to the object, so hold onto this!
 
 To initialize an object, we must use `Obj__init`.
 
@@ -133,3 +133,104 @@ Obj__init $brandon 1 "Brandon" 23
 ```
 
 Now I have a reference to `$brandon`, which is a pointer to a initialized object representing myself.
+
+##### A quick Obj__init Gotcha
+
+It's worth nothing that if you use `Obj__init` within a subshell, the object will only be initialized within the scope of that subshell.  Your best bet is to not wrap this call in a subshell unless you really know what you're doing.  However, we are allowed to pass objects into subshells after they have been initialized.  This follows the same rules as variables in a subshell:
+
+> Variables in a subshell are not visible outside the block of code in the subshell. They are not accessible to the parent process, to the shell that launched the subshell. These are, in effect, variables local to the child process. - [tldp.org](http://www.tldp.org/LDP/abs/html/subshells.html)
+
+### Object Dump for Debugging (Obj__dump)
+
+It's very useful to find out the state of a current object when trying to debug a script.
+
+If I were to run `Obj__dump $brandon`, immediately after initializing the object in the last section, it would output:
+
+```
+====== Person_4D69741E8CB76419 ======
+| age=23
+| id=3
+| name='Brandon Romano'
+=====================================
+```
+
+As you can see, `Obj__dump` prints out all of the public variables in an object.
+
+### Setters + Getters
+
+As mentioned in previous sections, public members can be accessed / updated.
+
+#### Updating Member Variables (Obj__set)
+
+To update a public member belonging to an object, you can use `Obj__set`.
+
+There are three parameters to `Obj__set`.
+
+The first is the object pointer itself that was returned by `Obj__alloc`.
+
+The second is the name of the public member variable.  This does not include the in-class `ClassName__` prefix.  If in your class you had a member `Person__name`, you would simply pass `name`.
+
+The third is the new value you would like to set to that member variable.
+
+```bash
+Obj__set $brandon name "Brandon Romano"
+```
+
+An `Obj__dump` on our `$brandon` object would now yield:
+
+```
+====== Person_4D69741E8CB76419 ======
+| age=23
+| id=3
+| name='Brandon Romano'
+=====================================
+```
+
+#### Accessing Member Variables (Obj__get)
+
+To get the value of a public member belonging to an object, you can use `Obj__get`.
+
+There are two parameters to `Obj__get`.
+
+The first is the object pointer itself that was returned by `Obj__alloc`.
+
+The second is the variable name, following the same rules as discussed in the previous section.
+
+If I were to now run:
+
+```bash
+myname=$(Obj__get $brandon name)
+echo $myname
+```
+
+It would output:
+
+```
+Brandon Romano
+```
+
+### Calling Public Methods
+
+Inside of a class, methods are called with the full name of the function (e.g. `Person__make_older`).
+
+Outside of the class, this is different, and public methods must be called via `Obj__call`.
+
+There are two required parameters to `Obj__call`.
+
+The first is the object pointer itself that was returned by `Obj__alloc`.
+
+The second is the method name. This does not include the in-class `ClassName__` prefix.  If in your class you had a public method `Person__make_older`, you would simply pass `make_older`.
+
+Following our example, we could call:
+
+```
+Obj__call $brandon make_older
+```
+
+If you wanted to pass any parameters to the actual function inside of the class, this is possible.  You are able to pass any number of parameters to Obj__call after the second parameter, and they will be packed up as parameters to the `make_older` method.
+
+Hypothetically, if make_older allowed a single parameter ($1) to specify how many years older, you could call:
+
+```
+Obj__call $brandon make_older 2
+```
