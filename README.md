@@ -83,14 +83,26 @@ A private member is denoted by the Class name followed by a single underscore `_
 
 ### Public Methods
 
+Public methods are functions bound within an object that have access to all of the public/private members.  Public methods also have access to all other public/private methods.  Public methods may be called from outside of the scope of the object.
+
+A public method is a function denoted by the Class name followed by two underscores `__`.
+
+> Following our example above, `Person__make_older` is a public method.
+
 ### Private Methods
+
+Private methods are functions bound within an object that have access to all of the public/private members. Private methods also have access to all other public/private methods.  Private methods may *not* be called from outside of the scope of the object, and are to only be used internally.
+
+A private method is a function denoted by the Class name followed by a single underscore `_`.
+
+> Following our example above, `Person_update_birthday_count` is a private method.
 
 ### Constructors
 
-In the example above, the method `Person__construct` is our constructor.  This is called when initializing an object.
+Constructors are magically named funcitons that get called when an object is initialized.  Constructors can take an arbitrary amount of parameters, and have all of the same powers as a public method (as it technically is a public method).
 
-Constructors are simply 
+A constructor is a function denoted by the class name followed by `__construct`.
 
-Constructors can take an arbitrary amount of parameters.
+> Following our example above, `Person__construct` is our constructor.
 
 ## Using Classes to Create Objects
