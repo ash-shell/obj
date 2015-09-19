@@ -234,3 +234,7 @@ Hypothetically, if make_older allowed a single parameter ($1) to specify how man
 ```
 Obj__call $brandon make_older 2
 ```
+
+# License
+
+Ash Obj is licensed under [MIT](LICENSE.md)
