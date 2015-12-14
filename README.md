@@ -1,16 +1,16 @@
-# Ash-Obj
+# Obj
 
-Ash-Obj is an [Ash](https://github.com/BrandonRomano/ash) module that adds object support to Bash.
+Obj is an [Ash](https://github.com/ash-shell/ash) module that adds object support to Bash.
 
 # Getting started
 
 ## Ash Users
 
-Ash-Obj is part of the Ash core, so you can immediately start using it within your Ash modules.
+Obj is part of the Ash core, so you can immediately start using it within your Ash modules.
 
 Simply place your Classes in a directory named `classes` in the root of your modules directory, and start using them!
 
-For an example of an ash module that uses objects, [look here](https://github.com/BrandonRomano/ash-obj-examples).
+For an example of an ash module that uses objects, [look here](https://github.com/ash-shell/obj-examples).
 
 ## Non Ash Users
 
@@ -37,7 +37,7 @@ Classes must be placed in the directory defined to hold classes (for Ash users, 
 
 I'll explain the different components of what a class is below, but here is what a class looks like.  This would be in a file named Person.sh in our classes diretory:
 
-> For a fully commented version of this class, look [here](https://github.com/BrandonRomano/ash-obj-examples/blob/master/classes/Person.sh)
+> For a fully commented version of this class, look [here](https://github.com/ash-shell/obj-examples/blob/master/classes/Person.sh)
 
 ```bash
 #!/bin/bash
@@ -237,4 +237,4 @@ Obj__call $brandon make_older 2
 
 # License
 
-Ash-Obj is licensed under [MIT](LICENSE.md)
+[MIT](LICENSE.md)
