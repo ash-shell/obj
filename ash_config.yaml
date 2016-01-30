@@ -1,2 +1,3 @@
-name: Obj
-callable_prefix: Obj
+name: obj
+package: github.com/ash-shell/obj
+default_alias: obj
