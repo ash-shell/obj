@@ -1,18 +1,17 @@
 #!/bin/bash
 
-# The directory we are pulling the classes from.
-# This will need to bet set!
-Obj__classes_directory=""
-
 ################################################################
 # Allocates an object pointer.  Must call `Obj__init` on this
 # pointer after this is called.
 #
-# @param $1: The name of the class to instantiate
+# @param $1: The class to instantiate, following the format:
+#   alias.ClassName
 # @returns: A pointer to the object
 ################################################################
 Obj__alloc(){
-    echo "$1_$(Obj_generate_uuid)"
+    local class="$1"
+    class=${class//\./_}
+    echo "$class""_$(Obj_generate_uuid)"
 }
 
 ################################################################
@@ -28,17 +27,33 @@ Obj__init(){
     IFS='_' read -ra segment <<< "$1"
     for part in "${segment[@]}"; do
         if [[ "$position" -eq 1 ]]; then
-            local class="$part"
+            local package_alias="$part"
         elif [[ "$position" -eq 2 ]]; then
+            local class="$part"
+        elif [[ "$position" -eq 3 ]]; then
             local uuid="$part"
         fi
         position=$((position+1))
     done
 
+    # Getting the class directory for the package
+    local class_directory="$(Obj_get_imported_directory "$package_alias")/$Ash__module_classes_folder"
+    if [[ "$class_directory" = "" ]]; then
+        Logger__error "Cannot create an object with the alias of $package_alias, as it has not been imported"
+        exit
+    fi
+
+    # Verifying file exists
+    local class_file="$class_directory/$class.sh"
+    if [[ ! -f "$class_file" ]]; then
+        Logger__error "There is no file named $class.sh in the aliased package"
+        exit
+    fi
+
     # Creating unique variable / method names
     local to_find="$class"_
-    local to_replace="$class"_"$uuid"_
-    eval "$(cat "$Obj__classes_directory/$class.sh" | sed -e "s:$to_find:$to_replace:g")"
+    local to_replace="$package_alias"_"$class"_"$uuid"_
+    eval "$(cat "$class_directory/$class.sh" | sed -e "s:$to_find:$to_replace:g")"
 
     # Calling the constructor
     Obj__call $1 construct "${@:2}"
