@@ -10,6 +10,12 @@
 ################################################################
 Obj__alloc(){
     local class="$1"
+
+    # Setting 'this' package if no package was specified
+    if [[ ! "$class" =~ .*\..* ]]; then
+        class="$Obj__THIS.$class"
+    fi
+
     class=${class//\./_}
     echo "$class""_$(Obj_generate_uuid)"
 }
