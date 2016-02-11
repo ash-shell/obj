@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Alias for current context
+Obj__THIS="this"
+
 # Imports map
 Obj_imports=( )
 
@@ -35,23 +38,24 @@ Obj__import() {
         local value=${import#*:}
         if [[ "$key" = "$module_alias" ]]; then
             # Replace it
-            Obj_imports[$pos]="$module_alias:$package_path"
+            Obj_imports[$pos]="$module_alias:$import_module"
             return
         fi
         pos=$((pos+1))
     done
 
     # Appending to imports
-    Obj_imports+=("$module_alias:$package_path")
+    Obj_imports+=("$module_alias:$import_module")
 }
+
 
 ################################################################
 # Gets the import directory from the alias
 #
 # @param $1: The alias of an import
-# @returns: The directory of the module
+# @returns: The package of the module
 ################################################################
-Obj_get_imported_directory() {
+Obj_get_imported_package() {
     local import=""
     for import in "${Obj_imports[@]}" ; do
         local key=${import%%:*}
@@ -61,4 +65,15 @@ Obj_get_imported_directory() {
             return
         fi
     done
+}
+
+################################################################
+# Gets the import directory from the alias
+#
+# @param $1: The alias of an import
+# @returns: The directory of the module
+################################################################
+Obj_get_imported_directory() {
+    local package="$(Obj_get_imported_package $1)"
+    echo "$(Ash__find_module_directory "$package" 0)"
 }

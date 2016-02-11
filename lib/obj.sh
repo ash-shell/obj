@@ -91,7 +91,27 @@ Obj__set(){
 # @param ${@:3} Any additional parameters to the method
 ################################################################
 Obj__call(){
+    # Params
+    local pointer="$1"
+    local method_name="$2"
+
+    # Getting package alias
+    IFS='_' read -ra segment <<< "$pointer"
+    for part in "${segment[@]}"; do
+        local package_alias="$part"
+        break
+    done
+
+    # Swapping current context so we can self-reference in any method calls
+    local old_context=$(Obj_get_imported_package "$Obj__THIS")
+    local new_context=$(Obj_get_imported_package "$package_alias")
+    Obj__import "$new_context" "$Obj__THIS"
+
+    # Calling method
     "$1__$2" "${@:3}"
+
+    # Resetting context
+    Obj__import "$old_context" "$Obj__THIS"
 }
 
 ################################################################
