@@ -80,6 +80,10 @@ Obj__get(){
 ################################################################
 Obj__set(){
     variable="$1__$2"
+    if [ -z ${!variable+x} ]; then
+        Logger__error "Cannot set the variable '$2' to the object, it is not defined in its class"
+        exit
+    fi
     eval $variable="\"$3\""
 }
 
@@ -122,7 +126,6 @@ Obj__call(){
 Obj__dump(){
     echo "====== $1 ======"
     (set -o posix ; set) | grep ^$1__ | sed -e "s:$1__::g" | sed -e "s:^:| :g"
-    echo "====================================="
 }
 
 ##################################
