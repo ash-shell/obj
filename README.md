@@ -2,6 +2,8 @@
 
 Obj is an [Ash](https://github.com/ash-shell/ash) module that adds object support to Bash.
 
+> If you want to first get excited about this before reading the entire README, jump to [this section](#class-example).
+
 # Getting started
 
 Obj is part of the Ash core, so you can just start using it in your Ash modules.
@@ -40,6 +42,8 @@ Classes must be placed in the directory named `classes` in the root of a module.
 
 > For example, if I were to create a class that would define what a Person object is, I would name the file `Person.sh`.
 
+### Class Example
+
 I'll explain the different components of what a class is below, but here is what a class looks like.  This would be in a file named Person.sh in our classes diretory:
 
 > For a fully commented version of this class, look [here](https://github.com/BrandonRomano/ash-obj-examples/blob/master/classes/Person.sh)
@@ -48,23 +52,28 @@ I'll explain the different components of what a class is below, but here is what
 #!/bin/bash
 # This is a simple class that represents a Person.
 
+# Public member variables
 Person__id=""
 Person__name=""
 Person__age=""
 
+# Private member variable
 Person_birthdays_count=0
 
+# Constructor
 Person__construct(){
     Person__id="$1"
     Person__name="$2"
     Person__age="$3"
 }
 
+# Public method
 Person__make_older(){
     Person__age=$((Person__age+1))
     Person_update_birthday_count
 }
 
+# Private method
 Person_update_birthday_count(){
     Person_birthdays_count=$((Person_birthdays_count+1))
     echo "Happy Birthday $Person__name!"
