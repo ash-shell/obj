@@ -4,28 +4,33 @@ Obj is an [Ash](https://github.com/ash-shell/ash) module that adds object suppor
 
 # Getting started
 
-## Ash Users
-
-Obj is part of the Ash core, so you can immediately start using it within your Ash modules.
-
-Simply place your Classes in a directory named `classes` in the root of your modules directory, and start using them!
+Obj is part of the Ash core, so you can just start using it in your Ash modules.
 
 For an example of an ash module that uses objects, [look here](https://github.com/BrandonRomano/ash-obj-examples).
 
-## Non Ash Users
+# Features + Usage
 
-Even if you're not an Ash user, this module can be used as a library.
+## Imports
 
-Just include the `obj.sh` library file in your script, and also point to where you're going to be keeping your classes.
+Before we can start using any objects, we must first import them.
 
-The start of your script will look something like this:
+If the objects you want to use are in your current module, they are already imported for you.
+
+If the objects you want to use are outside of your current module, you must import them. You can import an external module with `Obj__import`:
 
 ```bash
-. lib/obj.sh                            # Importing Obj library
-Obj__classes_directory="./classes"      # Setting classes directory
+Obj__import "$package_to_import" "$package_alias"
 ```
 
-# Features + Usage
+`$package_to_import` is the modules package (as specified in its `ash_config.yaml` file), while `$package_alias` is the alias in which we will refer to the newly imported package.
+
+If I have `https://github.com/BrandonRomano/ash-obj-examples` installed and would like to import its classes in a different module, I would this following line to my module:
+
+```bash
+Obj__import "github.com/BrandonRomano/ash-obj-examples" "objex"
+```
+
+> External modules must first be installed before importing them.  See [apm](https://github.com/ash-shell/apm).
 
 ## Creating Classes
 
