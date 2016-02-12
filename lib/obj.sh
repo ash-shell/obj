@@ -1,18 +1,23 @@
 #!/bin/bash
 
-# The directory we are pulling the classes from.
-# This will need to bet set!
-Obj__classes_directory=""
-
 ################################################################
 # Allocates an object pointer.  Must call `Obj__init` on this
 # pointer after this is called.
 #
-# @param $1: The name of the class to instantiate
+# @param $1: The class to instantiate, following the format:
+#   alias.ClassName
 # @returns: A pointer to the object
 ################################################################
 Obj__alloc(){
-    echo "$1_$(Obj_generate_uuid)"
+    local class="$1"
+
+    # Setting 'this' package if no package was specified
+    if [[ ! "$class" =~ .*\..* ]]; then
+        class="$Obj__THIS.$class"
+    fi
+
+    class=${class//\./_}
+    echo "$class""_$(Obj_generate_uuid)"
 }
 
 ################################################################
@@ -28,17 +33,33 @@ Obj__init(){
     IFS='_' read -ra segment <<< "$1"
     for part in "${segment[@]}"; do
         if [[ "$position" -eq 1 ]]; then
-            local class="$part"
+            local package_alias="$part"
         elif [[ "$position" -eq 2 ]]; then
+            local class="$part"
+        elif [[ "$position" -eq 3 ]]; then
             local uuid="$part"
         fi
         position=$((position+1))
     done
 
+    # Getting the class directory for the package
+    local class_directory="$(Obj_get_imported_directory "$package_alias")/$Ash__module_classes_folder"
+    if [[ "$class_directory" = "" ]]; then
+        Logger__error "Cannot create an object with the alias of $package_alias, as it has not been imported"
+        exit
+    fi
+
+    # Verifying file exists
+    local class_file="$class_directory/$class.sh"
+    if [[ ! -f "$class_file" ]]; then
+        Logger__error "There is no file named $class.sh in the aliased package"
+        exit
+    fi
+
     # Creating unique variable / method names
     local to_find="$class"_
-    local to_replace="$class"_"$uuid"_
-    eval "$(cat "$Obj__classes_directory/$class.sh" | sed -e "s:$to_find:$to_replace:g")"
+    local to_replace="$package_alias"_"$class"_"$uuid"_
+    eval "$(cat "$class_directory/$class.sh" | sed -e "s:$to_find:$to_replace:g")"
 
     # Calling the constructor
     Obj__call $1 construct "${@:2}"
@@ -65,6 +86,10 @@ Obj__get(){
 ################################################################
 Obj__set(){
     variable="$1__$2"
+    if [ -z ${!variable+x} ]; then
+        Logger__error "Cannot set the variable '$2' to the object, it is not defined in its class"
+        exit
+    fi
     eval $variable="\"$3\""
 }
 
@@ -76,7 +101,27 @@ Obj__set(){
 # @param ${@:3} Any additional parameters to the method
 ################################################################
 Obj__call(){
+    # Params
+    local pointer="$1"
+    local method_name="$2"
+
+    # Getting package alias
+    IFS='_' read -ra segment <<< "$pointer"
+    for part in "${segment[@]}"; do
+        local package_alias="$part"
+        break
+    done
+
+    # Swapping current context so we can self-reference in any method calls
+    local old_context=$(Obj_get_imported_package "$Obj__THIS")
+    local new_context=$(Obj_get_imported_package "$package_alias")
+    Obj__import "$new_context" "$Obj__THIS"
+
+    # Calling method
     "$1__$2" "${@:3}"
+
+    # Resetting context
+    Obj__import "$old_context" "$Obj__THIS"
 }
 
 ################################################################
@@ -87,7 +132,6 @@ Obj__call(){
 Obj__dump(){
     echo "====== $1 ======"
     (set -o posix ; set) | grep ^$1__ | sed -e "s:$1__::g" | sed -e "s:^:| :g"
-    echo "====================================="
 }
 
 ##################################
@@ -103,13 +147,13 @@ Obj_generate_uuid(){
 
     while [ "$count" -le $UUID_LENGTH ]
     do
-        random_number=$RANDOM
+        local random_number=$RANDOM
         let "random_number %= 16"
-        hexval=$(Obj_map_hex "$random_number")
-        uuid="$uuid$hexval"
+        local hexval=$(Obj_map_hex "$random_number")
+        local uuid="$uuid$hexval"
         let "count += 1"
     done
-    echo $uuid
+    echo "$uuid"
 }
 
 ##################################

@@ -2,64 +2,78 @@
 
 Obj is an [Ash](https://github.com/ash-shell/ash) module that adds object support to Bash.
 
+> If you want to first get excited about this before reading the entire README, jump to [this section](#class-example).
+
 # Getting started
 
-## Ash Users
-
-Obj is part of the Ash core, so you can immediately start using it within your Ash modules.
-
-Simply place your Classes in a directory named `classes` in the root of your modules directory, and start using them!
+Obj is part of the Ash core, so you can just start using it in your Ash modules.
 
 For an example of an ash module that uses objects, [look here](https://github.com/BrandonRomano/ash-obj-examples).
 
-## Non Ash Users
+# Features + Usage
 
-Even if you're not an Ash user, this module can be used as a library.
+## Imports
 
-Just include the `obj.sh` library file in your script, and also point to where you're going to be keeping your classes.
+Before we can start using any objects, we must first import them.
 
-The start of your script will look something like this:
+If the objects you want to use are in your current module, they are already imported for you.
+
+If the objects you want to use are outside of your current module, you must import them. You can import an external module with `Obj__import`:
 
 ```bash
-. lib/obj.sh                            # Importing Obj library
-Obj__classes_directory="./classes"      # Setting classes directory
+Obj__import "$package_to_import" "$package_alias"
 ```
 
-# Features + Usage
+`$package_to_import` is the modules package (as specified in its `ash_config.yaml` file), while `$package_alias` is the alias in which we will refer to the newly imported package.
+
+If I have `https://github.com/BrandonRomano/ash-obj-examples` installed and would like to import its classes in a different module, I would this following line to my module:
+
+```bash
+Obj__import "github.com/BrandonRomano/ash-obj-examples" "objex"
+```
+
+> External modules must first be installed before importing them.  See [apm](https://github.com/ash-shell/apm).
 
 ## Creating Classes
 
 Before getting into any details, as you would expect classes are the definition of what an object is.
 
-Classes must be placed in the directory defined to hold classes (for Ash users, this is in a directory named `classes` in the root of your module).  Classes also must be named as their classname with `.sh` as their extension.  By convention, you should use [PascalCase](http://c2.com/cgi/wiki?PascalCase) for class naming as many modern programming languages use.
+Classes must be placed in the directory named `classes` in the root of a module.  Classes also must be named as their classname with `.sh` as their extension.  By convention, you should use [PascalCase](http://c2.com/cgi/wiki?PascalCase) for class naming as many modern programming languages use.
 
 > For example, if I were to create a class that would define what a Person object is, I would name the file `Person.sh`.
 
+### Class Example
+
 I'll explain the different components of what a class is below, but here is what a class looks like.  This would be in a file named Person.sh in our classes diretory:
 
-> For a fully commented version of this class, look [here](https://github.com/ash-shell/obj-examples/blob/master/classes/Person.sh)
+> For a fully commented version of this class, look [here](https://github.com/BrandonRomano/ash-obj-examples/blob/master/classes/Person.sh)
 
 ```bash
 #!/bin/bash
 # This is a simple class that represents a Person.
 
+# Public member variables
 Person__id=""
 Person__name=""
 Person__age=""
 
+# Private member variable
 Person_birthdays_count=0
 
+# Constructor
 Person__construct(){
     Person__id="$1"
     Person__name="$2"
     Person__age="$3"
 }
 
+# Public method
 Person__make_older(){
     Person__age=$((Person__age+1))
     Person_update_birthday_count
 }
 
+# Private method
 Person_update_birthday_count(){
     Person_birthdays_count=$((Person_birthdays_count+1))
     echo "Happy Birthday $Person__name!"
@@ -101,7 +115,7 @@ A private method is a function denoted by the Class name followed by a single un
 
 ### Constructors
 
-Constructors are magically named funcitons that get called when an object is initialized.  Constructors can take an arbitrary amount of parameters, and have all of the same powers as a public method (as it technically is a public method).
+Constructors are magically named funcitons that get called when an object is initialized.  Constructors can take an arbitrary amount of parameters, and have all of the same powers as a public method (as it technically is just a public method).
 
 A constructor is a function denoted by the class name followed by `__construct`.
 
@@ -134,6 +148,21 @@ Obj__init $brandon 1 "Brandon" 23
 
 Now I have a reference to `$brandon`, which is a pointer to a initialized object representing myself.
 
+##### From an External Package
+
+If I wanted to create an object from an external package that I've imported, we must specify the package alias in `Obj__alloc`, in `alias.ClassName` format:
+
+```bash
+# Importing
+Obj__import "github.com/BrandonRomano/ash-obj-examples" "objex"
+
+# Creating the Object
+brandon=$(Obj__alloc "objex.Person")  # Note the `objex.` before the class name
+Obj__init $brandon 1 "Brandon" 23
+```
+
+> When you're creating an object from the current context, you could actually say `this.ClassName` - Although, it isn't necessisary because if you don't specify a package, `Obj__alloc` by default assumes you mean `this`.
+
 ##### A quick Obj__init Gotcha
 
 It's worth nothing that if you use `Obj__init` within a subshell, the object will only be initialized within the scope of that subshell.  Your best bet is to not wrap this call in a subshell unless you really know what you're doing.  However, we are allowed to pass objects into subshells after they have been initialized.  This follows the same rules as variables in a subshell:
@@ -151,7 +180,6 @@ If I were to run `Obj__dump $brandon`, immediately after initializing the object
 | age=23
 | id=3
 | name='Brandon Romano'
-=====================================
 ```
 
 As you can see, `Obj__dump` prints out all of the public variables in an object.
@@ -183,7 +211,6 @@ An `Obj__dump` on our `$brandon` object would now yield:
 | age=23
 | id=3
 | name='Brandon Romano'
-=====================================
 ```
 
 #### Accessing Member Variables (Obj__get)
@@ -211,7 +238,7 @@ Brandon Romano
 
 ### Calling Public Methods
 
-Inside of a class, methods are called with the full name of the function (e.g. `Person__make_older`).
+Inside of a class, all methods are called with the full name of the function (e.g. `Person__make_older`).
 
 Outside of the class, this is different, and public methods must be called via `Obj__call`.
 
