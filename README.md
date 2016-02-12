@@ -36,13 +36,13 @@ Obj__import "github.com/BrandonRomano/ash-obj-examples" "objex"
 
 Before getting into any details, as you would expect classes are the definition of what an object is.
 
-Classes must be placed in the directory defined to hold classes (for Ash users, this is in a directory named `classes` in the root of your module).  Classes also must be named as their classname with `.sh` as their extension.  By convention, you should use [PascalCase](http://c2.com/cgi/wiki?PascalCase) for class naming as many modern programming languages use.
+Classes must be placed in the directory named `classes` in the root of a module.  Classes also must be named as their classname with `.sh` as their extension.  By convention, you should use [PascalCase](http://c2.com/cgi/wiki?PascalCase) for class naming as many modern programming languages use.
 
 > For example, if I were to create a class that would define what a Person object is, I would name the file `Person.sh`.
 
 I'll explain the different components of what a class is below, but here is what a class looks like.  This would be in a file named Person.sh in our classes diretory:
 
-> For a fully commented version of this class, look [here](https://github.com/ash-shell/obj-examples/blob/master/classes/Person.sh)
+> For a fully commented version of this class, look [here](https://github.com/BrandonRomano/ash-obj-examples/blob/master/classes/Person.sh)
 
 ```bash
 #!/bin/bash
@@ -106,7 +106,7 @@ A private method is a function denoted by the Class name followed by a single un
 
 ### Constructors
 
-Constructors are magically named funcitons that get called when an object is initialized.  Constructors can take an arbitrary amount of parameters, and have all of the same powers as a public method (as it technically is a public method).
+Constructors are magically named funcitons that get called when an object is initialized.  Constructors can take an arbitrary amount of parameters, and have all of the same powers as a public method (as it technically is just a public method).
 
 A constructor is a function denoted by the class name followed by `__construct`.
 
@@ -139,6 +139,21 @@ Obj__init $brandon 1 "Brandon" 23
 
 Now I have a reference to `$brandon`, which is a pointer to a initialized object representing myself.
 
+##### From an External Package
+
+If I wanted to create an object from an external package that I've imported, we must specify the package alias in `Obj__alloc`, in `alias.ClassName` format:
+
+```bash
+# Importing
+Obj__import "github.com/BrandonRomano/ash-obj-examples" "objex"
+
+# Creating the Object
+brandon=$(Obj__alloc "objex.Person")  # Note the `objex.` before the class name
+Obj__init $brandon 1 "Brandon" 23
+```
+
+> When you're creating an object from the current context, you could actually say `this.ClassName` - Although, it isn't necessisary because if you don't specify a package, `Obj__alloc` by default assumes you mean `this`.
+
 ##### A quick Obj__init Gotcha
 
 It's worth nothing that if you use `Obj__init` within a subshell, the object will only be initialized within the scope of that subshell.  Your best bet is to not wrap this call in a subshell unless you really know what you're doing.  However, we are allowed to pass objects into subshells after they have been initialized.  This follows the same rules as variables in a subshell:
@@ -156,7 +171,6 @@ If I were to run `Obj__dump $brandon`, immediately after initializing the object
 | age=23
 | id=3
 | name='Brandon Romano'
-=====================================
 ```
 
 As you can see, `Obj__dump` prints out all of the public variables in an object.
@@ -188,7 +202,6 @@ An `Obj__dump` on our `$brandon` object would now yield:
 | age=23
 | id=3
 | name='Brandon Romano'
-=====================================
 ```
 
 #### Accessing Member Variables (Obj__get)
@@ -216,7 +229,7 @@ Brandon Romano
 
 ### Calling Public Methods
 
-Inside of a class, methods are called with the full name of the function (e.g. `Person__make_older`).
+Inside of a class, all methods are called with the full name of the function (e.g. `Person__make_older`).
 
 Outside of the class, this is different, and public methods must be called via `Obj__call`.
 
