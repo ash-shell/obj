@@ -147,13 +147,13 @@ Obj_generate_uuid(){
 
     while [ "$count" -le $UUID_LENGTH ]
     do
-        random_number=$RANDOM
+        local random_number=$RANDOM
         let "random_number %= 16"
-        hexval=$(Obj_map_hex "$random_number")
-        uuid="$uuid$hexval"
+        local hexval=$(Obj_map_hex "$random_number")
+        local uuid="$uuid$hexval"
         let "count += 1"
     done
-    echo $uuid
+    echo "$uuid"
 }
 
 ##################################
