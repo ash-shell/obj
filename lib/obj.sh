@@ -43,7 +43,7 @@ Obj__init(){
     done
 
     # Getting the class directory for the package
-    local class_directory="$(Obj_get_imported_directory "$package_alias")/$Ash__module_classes_folder"
+    local class_directory="$(Obj_get_imported_directory "$package_alias")/$Ash__MODULE_CLASSES_DIRECTORY"
     if [[ "$class_directory" = "" ]]; then
         Logger__error "Cannot create an object with the alias of $package_alias, as it has not been imported"
         exit
